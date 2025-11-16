@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 
 function App() {
@@ -19,6 +19,20 @@ function App() {
       copychips.splice(index,1);
       setchips(copychips)
   }
+// save the data localstorage
+  // Save chips whenever they change
+useEffect(() => {
+  localStorage.setItem("chips", JSON.stringify(chips));
+}, [chips]);
+
+// Load chips when page loads
+useEffect(() => {
+  const saved = localStorage.getItem("chips");
+  if (saved) {
+    setchips(JSON.parse(saved));
+  }
+}, []);
+  
 
   return (
     <>
