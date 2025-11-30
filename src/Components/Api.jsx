@@ -1,38 +1,65 @@
-import { useEffect,useState } from "react";
+import { useState, useEffect } from "react";
 
 function Api() {
-
-    const [users, setusers] = useState([])
+  const [texts, settexts] = useState([]);
+  const [input, setinput] = useState("")
+  const [chips, setchips] = useState([])
 
   useEffect(() => {
+    const URL = `https://jsonplaceholder.typicode.com/users`;
     const todo = async () => {
       try {
-        const data = await fetch("https://jsonplaceholder.typicode.com/users");
-        const res = await data.json();
-        setusers(res)
+        const data = await fetch(URL);
+        const res =await data.json();
+        settexts(res);
       } catch (error) {
         console.log(error);
       }
-    }
+    };
     todo();
-  }, []);
+  }
+  , []);
 
-  return (
-    <>
-      <h1 className="flex text-center font-bold text-4xl p-4 m-4">Users are as below</h1>
+  const deletehandle=(index)=>{
+    const copytext=[...texts]
+    copytext.splice(index,1)
+    settexts(copytext)
+  }
+
+  const addchip=(e)=>{
+    if(e.key==='Enter' && input.trim() !==""){
+      setchips(prev=>[...prev,input])
+      setinput("")
+    }
+  }
+
+  return <>
+    {texts.map((text,index)=>(
       <div>
-        {users.map((user)=>
-            <div key={user.id } className="p-4 m-4 border rounded-2xl shadow-sm hover:shadow-md transition bg-cyan-300">
-            <p >user.name :{user.name}</p>
-            <p>user.email :{user.email}</p>
-            <p>user.address: {user.address.street}</p>
-            <p>user.email {user.username}</p>
-            
-            </div>
-        )}
+      <div className="p-4 m-4 bg-blue-600 rounded-xl flex flex-col w-25">
+        <p>name:{text.name}</p>
+        <p>id:{text.id}</p>
+        <p>username:{text.username}</p>
+        <p>address:{text.address.street}</p>
       </div>
-    </>
-  );
-}
+      <button 
+      onClick={()=>deletehandle(index)}
+      className="text-red-700">X</button>
+      </div>
+    ))}
 
+    <input type="text" placeholder="enter your value"
+    value={input}
+    onChange={(e)=>setinput(e.target.value)}
+    onKeyDown={(e)=>addchip(e)}
+
+    />
+
+    {chips.map((chip,index)=>(
+      <div>
+        {chip}
+      </div>
+    ))}
+  </>;
+}
 export default Api;
